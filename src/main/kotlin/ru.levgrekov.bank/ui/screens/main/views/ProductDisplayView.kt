@@ -1,4 +1,4 @@
-package ru.levgrekov.bank.ui.screens.product.views
+package ru.levgrekov.bank.ui.screens.main.views
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -18,14 +18,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import compose.icons.LineAwesomeIcons
 import compose.icons.lineawesomeicons.LongArrowAltLeftSolid
-import ru.levgrekov.bank.ui.screens.product.models.ProductState
+import ru.levgrekov.bank.ui.screens.main.models.MainScreenState
 import java.time.LocalDate
 
 data class Transaction(val date: LocalDate, val amount: Double, val description: String)
 
 @Composable
 fun ProductDisplayView(
-    state: ProductState.Display,
+    state: MainScreenState.Product,
     onChangeRecipient: (String) -> Unit,
     onChangeAmount: (String) -> Unit,
     onFloatingButtonClick: () -> Unit,

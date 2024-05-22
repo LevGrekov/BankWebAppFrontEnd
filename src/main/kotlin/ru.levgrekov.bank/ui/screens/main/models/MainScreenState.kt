@@ -3,12 +3,17 @@ package ru.levgrekov.bank.ui.screens.main.models
 import ru.levgrekov.bank.logic.AvailableProductLogic
 import ru.levgrekov.bank.logic.ProductLogic
 
-
 sealed class MainScreenState {
 
     data object Loading : MainScreenState()
 
     data class NewProduct(val product: AvailableProductLogic.Full) : MainScreenState()
+
+    data class Product(
+        val product: ProductLogic.Full,
+        var amountToTransfer: String,
+        var recipientAccount: String,
+    ) : MainScreenState()
 
     data class Display(
         val userName: String,

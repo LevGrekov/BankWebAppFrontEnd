@@ -1,6 +1,9 @@
 package ru.levgrekov.bank.ui.screens.auth
 
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import io.ktor.client.call.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
@@ -10,15 +13,16 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ru.levgrekov.bank.logic.UserLogic
 import ru.levgrekov.bank.ui.MainObject
-import ru.levgrekov.bank.ui.MainObject.screenState
 import ru.levgrekov.bank.ui.MainObject.token
-import ru.levgrekov.bank.ui.ScreenState
 import ru.levgrekov.bank.ui.ViewModel
 import ru.levgrekov.bank.ui.screens.auth.models.AuthEvent
 import ru.levgrekov.bank.ui.screens.auth.models.AuthState
 
 
+
 class AuthViewModel : ViewModel<AuthState, AuthEvent>(AuthState.Authorization()) {
+
+    var isAuthenticate by mutableStateOf(false)
 
     override fun obtainEvent(viewEvent: AuthEvent) {
         when (viewState) {
@@ -62,9 +66,7 @@ class AuthViewModel : ViewModel<AuthState, AuthEvent>(AuthState.Authorization())
                 viewState = AuthState.Authorization()
             }
 
-            AuthEvent.ExecuteButtonClick -> {
-                registerUser(currState)
-            }
+            AuthEvent.ExecuteButtonClick -> registerUser(currState)
 
             is AuthEvent.PasswordChanged -> {
                 viewState = currState.copy(
@@ -113,7 +115,7 @@ class AuthViewModel : ViewModel<AuthState, AuthEvent>(AuthState.Authorization())
             withContext(this.coroutineContext) {
                 if (response.status.isSuccess()) {
                     token = response.bodyAsText()
-                    screenState = ScreenState.MAIN
+                    isAuthenticate = true
                 } else {
                     viewState = AuthState.Authorization(
                         isError = true,
@@ -163,69 +165,6 @@ class AuthViewModel : ViewModel<AuthState, AuthEvent>(AuthState.Authorization())
     private fun validatePassword(password: String): Boolean = (password.length > 4)
 
     private fun validatePhone(phone: String): Boolean = (phone.length >= 10)
-
-//    suspend fun onLogIn() = sendRequest("user", HttpMethod.Get, LoginReceiveRemote(phone, password))
-
-//    suspend fun onSignIn() = sendRequest(
-//        "user",
-//        HttpMethod.Post,
-//        RegistrationReceiveRemote(phone, password, firstname, secondName, thirdName, birthdate)
-//    )
-//
-//    fun authEnable(): Boolean =
-//        password.isNotEmpty() && phone.isNotEmpty()
-//
-//    fun signInEnable(): Boolean =
-//        password.isNotEmpty() && phone.isNotEmpty() && firstname.isNotEmpty() && secondName.isNotEmpty()
-//    // fun onSignOut() = sendRequest("TYPE" to "EXIT").also { userName = null }
-//
-//    fun onChangeRegistering() {
-//        registering = !registering
-//        messageAndIsError = null to false
-//    }
-
-//    override fun <T>onServerResponse(operation: OperationResult<T>) {
-//        val operation = gson.fromJson<OperationResult<T>>(operation)
-//        when(operation){
-//            is OperationResult.Error -> {
-//                messageAndIsError = operation.message to true
-//            }
-//            is OperationResult.Success -> {
-//                when(operation.data){
-//                    is String -> {messageAndIsError = "Вы успешно зарегистрировались" to false}
-//                    else -> { screenState = ScreenState.MAIN}
-//                }
-//            }
-////            Operation.SUCCESS_AUTH -> {
-////                screenState = ScreenState.MAIN
-////            }
-////            Operation.SUCCESS_REG -> {
-////                onChangeRegistering()
-////                 = "Вы успешно зарегистрировались" to false
-////            }
-//
-//            else -> { println("MEGAFATALERROR")}
-//        }
-//    }
-
-//    override fun onServerResponse(operation: ServerResponse) {
-//        when (operation) {
-//            is ServerResponse.Error -> {
-//                messageAndIsError = operation.message to true
-//            }
-//            is ServerResponse.Reg -> {
-//                onChangeRegistering()
-//                messageAndIsError = operation.message to true
-//            }
-//
-//            is ServerResponse.Auth -> {
-//
-//                screenState = ScreenState.MAIN
-//            }
-//
-//            else -> {}
-//        }
-//    }
 
 
 }

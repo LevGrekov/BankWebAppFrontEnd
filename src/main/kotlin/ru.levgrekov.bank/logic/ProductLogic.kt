@@ -1,7 +1,7 @@
 package ru.levgrekov.bank.logic
 
 import kotlinx.serialization.Serializable
-import ru.levgrekov.bank.ui.LocalDateSerializer
+import ru.levgrekov.bank.logic.serialization.LocalDateSerializer
 import java.time.LocalDate
 
 @Serializable

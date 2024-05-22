@@ -1,9 +1,9 @@
 package ru.levgrekov.bank.ui.screens.auth
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import ru.levgrekov.bank.navigation.NavController
+import ru.levgrekov.bank.navigation.ScreenState
 import ru.levgrekov.bank.ui.screens.auth.models.AuthEvent
 import ru.levgrekov.bank.ui.screens.auth.models.AuthState
 import ru.levgrekov.bank.ui.screens.auth.views.AuthViewAuthorization
@@ -11,7 +11,8 @@ import ru.levgrekov.bank.ui.screens.auth.views.AuthViewRegistration
 
 @Composable
 fun AuthScreen(
-    vm: AuthViewModel
+    vm: AuthViewModel,
+    navController: NavController
 ) {
     val viewState by vm.viewStates().collectAsState()
 
@@ -40,6 +41,13 @@ fun AuthScreen(
                 onAuthStateChanged = { vm.obtainEvent(AuthEvent.ModeChangeClick) },
                 onAuthenticate = { vm.obtainEvent(AuthEvent.ExecuteButtonClick) },
             )
+        }
+
+    }
+
+    LaunchedEffect(key1 = vm.isAuthenticate){
+        if(vm.isAuthenticate){
+            navController.navigate(ScreenState.MAIN.name)
         }
     }
 }

@@ -6,21 +6,25 @@ import io.ktor.http.*
 import kotlinx.coroutines.*
 import ru.levgrekov.bank.logic.AvailableProductLogic
 import ru.levgrekov.bank.logic.ProductLogic
-import ru.levgrekov.bank.ui.MainObject.screenState
-import ru.levgrekov.bank.ui.MainObject.sendRequest
-import ru.levgrekov.bank.ui.ScreenState
+import ru.levgrekov.bank.net.Client.sendRequest
 import ru.levgrekov.bank.ui.ViewModel
 import ru.levgrekov.bank.ui.screens.main.models.MainScreenEvents
 import ru.levgrekov.bank.ui.screens.main.models.MainScreenState
 
 class MainViewModel : ViewModel<MainScreenState, MainScreenEvents>(MainScreenState.Loading) {
 
+
     override fun obtainEvent(viewEvent: MainScreenEvents) {
         when (viewState) {
             MainScreenState.Loading -> reduce(viewEvent, viewState as MainScreenState.Loading)
             is MainScreenState.Display -> reduce(viewEvent, viewState as MainScreenState.Display)
             is MainScreenState.NewProduct -> reduce(viewEvent, viewState as MainScreenState.NewProduct)
+            is MainScreenState.Product -> reduce(viewEvent, viewState as MainScreenState.Product)
         }
+    }
+
+    private fun reduce(event: MainScreenEvents, currState: MainScreenState.Product) {
+
     }
 
     private fun reduce(event: MainScreenEvents, currState: MainScreenState.Loading) {
@@ -87,8 +91,6 @@ class MainViewModel : ViewModel<MainScreenState, MainScreenEvents>(MainScreenSta
                         products
                     )
                 }
-            } else {
-                screenState = ScreenState.AUTH
             }
         }
     }
@@ -98,13 +100,14 @@ class MainViewModel : ViewModel<MainScreenState, MainScreenEvents>(MainScreenSta
     }
 
     private fun openExistProductView() {
-        screenState = ScreenState.PRODUCT
+
     }
 
     private fun openProductView(currState: MainScreenState.Display, event: MainScreenEvents.ClickNewProduct) {
         viewState = MainScreenState.Loading
         viewModelScope.launch {
-            val availableProductResponse = async { sendRequest("api/v1/available_products/${event.id}", HttpMethod.Get) }.await()
+            val availableProductResponse =
+                async { sendRequest("api/v1/available_products/${event.id}", HttpMethod.Get) }.await()
             val availableProduct = availableProductResponse.body<AvailableProductLogic.Full>()
             viewState = MainScreenState.NewProduct(availableProduct)
         }

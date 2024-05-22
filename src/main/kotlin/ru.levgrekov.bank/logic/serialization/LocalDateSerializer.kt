@@ -1,4 +1,4 @@
-package ru.levgrekov.bank.ui
+package ru.levgrekov.bank.logic.serialization
 
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer

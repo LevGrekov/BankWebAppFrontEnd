@@ -23,9 +23,9 @@ import ru.levgrekov.bank.ui.screens.main.models.MainScreenState
 @Composable
 fun MainViewNewProduct(
     state: MainScreenState.NewProduct,
-    onGetNewProduct:(id: Int) -> Unit,
-    onFloatingButtonClick: ()-> Unit
-){
+    onGetNewProduct: (id: Int) -> Unit,
+    onFloatingButtonClick: () -> Unit
+) {
     val scrollState = rememberScrollState()
     Column(
         modifier = Modifier
@@ -72,9 +72,9 @@ fun MainViewNewProduct(
         )
 
         Button(
-            onClick = {onGetNewProduct(state.product.id)},
+            onClick = { onGetNewProduct(state.product.id) },
             modifier = Modifier
-                .padding(horizontal =  16.dp)
+                .padding(horizontal = 16.dp)
                 .fillMaxSize(),
         ) {
             Text(text = "Заиметь ${state.product.name}")

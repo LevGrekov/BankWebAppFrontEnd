@@ -1,52 +1,56 @@
-
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.keyframes
-import androidx.compose.animation.core.updateTransition
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.background
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.lightColors
+import androidx.compose.material.Surface
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.*
-import ru.levgrekov.bank.ui.MainObject
-import ru.levgrekov.bank.ui.ScreenState
+import androidx.compose.ui.window.Window
+import androidx.compose.ui.window.WindowPlacement
+import androidx.compose.ui.window.application
+import androidx.compose.ui.window.rememberWindowState
+import ru.levgrekov.bank.navigation.NavigationHost
+import ru.levgrekov.bank.navigation.ScreenState
+import ru.levgrekov.bank.navigation.composable
+import ru.levgrekov.bank.navigation.rememberNavController
 import ru.levgrekov.bank.ui.screens.auth.AuthScreen
+import ru.levgrekov.bank.ui.screens.auth.AuthViewModel
 import ru.levgrekov.bank.ui.screens.main.MainScreen
-import ru.levgrekov.bank.ui.screens.product.ProductScreen
+import ru.levgrekov.bank.ui.screens.main.MainViewModel
+import ru.levgrekov.bank.ui.theme.CustomTheme
 
-
-val mainObject = MainObject
 fun main() = application {
+    val authViewModel = AuthViewModel()
+    val mainViewModel = MainViewModel()
+
+
+    val navController by rememberNavController(ScreenState.AUTH.name)
+
     Window(
         state = rememberWindowState(
             width = 450.dp,
             height = 650.dp,
             placement = WindowPlacement.Floating,
-            position = WindowPosition(100.dp, 100.dp),
-            isMinimized = false
         ),
         onCloseRequest = { exitApplication() }
     ) {
-        val offsetX by updateTransition(targetState = mainObject.screenState).animateFloat({
-            keyframes {
-                durationMillis = 500
-                0f at 0
-                800f at 250
-            }
-        }) { _ -> 0f }
-
-        MaterialTheme(colors = lightColors(primary = Color(255, 104, 0), primaryVariant = Color(255, 79, 0))) {
-            Box(
-                Modifier.offset(x = offsetX.dp, y = 0.dp)
+        CustomTheme {
+            Surface(
+                modifier = Modifier.background(color = MaterialTheme.colors.background)
             ) {
-                when (mainObject.screenState) {
-                    ScreenState.MAIN -> MainScreen(mainObject.mainViewModel)
-                    ScreenState.AUTH -> AuthScreen(mainObject.authViewModel)
-                    ScreenState.PRODUCT -> ProductScreen(mainObject.productViewModel)
-                }
+                NavigationHost(navController) {
+                    composable(ScreenState.MAIN.name) {
+                        MainScreen(mainViewModel, navController)
+                    }
+
+                    composable(ScreenState.AUTH.name) {
+                        AuthScreen(authViewModel, navController)
+                    }
+
+//                    composable(ScreenState.PRODUCT::class.toString()) {
+//                        ProductScreen(productViewModel,navController)
+//                    }
+
+                }.build()
             }
         }
     }
