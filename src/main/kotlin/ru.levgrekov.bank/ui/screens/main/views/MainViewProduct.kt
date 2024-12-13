@@ -31,9 +31,7 @@ fun ProductDisplayView(
     onFloatingButtonClick: () -> Unit,
     onMakeTransaction: () -> Unit,
 ) {
-    val productName = "Новый продукт"
-    val productType = "Тип продукта"
-    val productBalance = 1000.0
+
     val transactions = listOf(
         Transaction(LocalDate.now(), -100.0, "Магазин"),
         Transaction(LocalDate.now().minusDays(1), 500.0, "Перевод от друга"),
@@ -55,65 +53,74 @@ fun ProductDisplayView(
             elevation = 8.dp
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
-                Text(text = "Продукт: $productName", fontSize = 24.sp, fontWeight = FontWeight.Bold)
-                Text(text = "Тип: $productType", fontSize = 20.sp, fontWeight = FontWeight.Medium)
-                Text(text = "Баланс: $productBalance ₽", fontSize = 20.sp, fontWeight = FontWeight.Medium)
+                Text(text = state.product.name, fontSize = 24.sp, fontWeight = FontWeight.Bold)
+                Text(text = "Тип: ${state.product.type}", fontSize = 20.sp, fontWeight = FontWeight.Medium)
+                Text(text = "Баланс: ${state.product.balance} ₽", fontSize = 20.sp, fontWeight = FontWeight.Medium)
             }
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp)
-                .shadow(4.dp, RoundedCornerShape(16.dp)),
-            shape = RoundedCornerShape(16.dp),
-            elevation = 8.dp
-        ) {
-            Column(modifier = Modifier.padding(16.dp)) {
-                Text(text = "Сделать перевод", fontSize = 20.sp, fontWeight = FontWeight.Bold)
-                OutlinedTextField(
-                    value = state.recipientAccount,
-                    onValueChange = onChangeRecipient,
-                    label = { Text("Получатель") },
-                    modifier = Modifier.fillMaxWidth()
-                )
-                OutlinedTextField(
-                    value = state.amountToTransfer,
-                    onValueChange = onChangeAmount,
-                    label = { Text("Сумма") },
-                    modifier = Modifier.fillMaxWidth(),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Button(
-                    onClick = onMakeTransaction,
-                    modifier = Modifier.align(Alignment.End)
-                ) {
-                    Text("Перевести")
-                }
-            }
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Text(text = "История транзакций", fontSize = 20.sp, fontWeight = FontWeight.Bold)
         LazyColumn(modifier = Modifier.fillMaxHeight()) {
+            item {
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp)
+                        .shadow(4.dp, RoundedCornerShape(16.dp)),
+                    shape = RoundedCornerShape(16.dp),
+                    elevation = 8.dp
+                ) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Text(text = "Сделать перевод", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                        OutlinedTextField(
+                            value = state.recipientAccount,
+                            onValueChange = onChangeRecipient,
+                            label = { Text("Получатель") },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                        OutlinedTextField(
+                            value = state.amountToTransfer,
+                            onValueChange = onChangeAmount,
+                            label = { Text("Сумма") },
+                            modifier = Modifier.fillMaxWidth(),
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                        )
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        Button(
+                            onClick = onMakeTransaction,
+                            modifier = Modifier.align(Alignment.End)
+                        ) {
+                            Text("Перевести")
+                        }
+                    }
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(text = "История транзакций", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+            }
             items(transactions) { transaction ->
                 TransactionItem(transaction)
             }
         }
     }
-    FloatingActionButton(
-        onClick = onFloatingButtonClick,
-        modifier = Modifier.padding(16.dp),
-        backgroundColor = MaterialTheme.colors.primaryVariant
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
     ) {
-        Icon(LineAwesomeIcons.LongArrowAltLeftSolid, contentDescription = "Назад")
+        FloatingActionButton(
+            onClick = onFloatingButtonClick,
+            backgroundColor = MaterialTheme.colors.primaryVariant,
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+        ) {
+            Icon(LineAwesomeIcons.LongArrowAltLeftSolid, contentDescription = "Назад")
+        }
     }
+
 }
 
 @Composable
